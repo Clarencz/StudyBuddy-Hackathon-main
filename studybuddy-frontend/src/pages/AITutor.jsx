@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, MessageSquare, BookOpen, FileQuestion, Settings } from "lucide-react";
+import {
+  Bot,
+  MessageSquare,
+  BookOpen,
+  FileQuestion,
+  Settings,
+} from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 const AITutor = () => {
@@ -58,7 +70,12 @@ const AITutor = () => {
 
   const loadConversationMessages = async (conversationId) => {
     try {
-      const res = await apiCall(`/ai/conversations/${conversationId}/messages`, { method: "GET" });
+      const res = await apiCall(
+        `${
+          import.meta.env.VITE_API_URL
+        }/ai/conversations/${conversationId}/messages`,
+        { method: "GET" }
+      );
       setMessages(res.messages || []);
     } catch (err) {
       console.error("Failed to load messages:", err);
@@ -69,16 +86,16 @@ const AITutor = () => {
     try {
       const res = await apiCall("/ai/conversations", {
         method: "POST",
-        body: JSON.stringify({ 
-          type: "qa", 
+        body: JSON.stringify({
+          type: "qa",
           title: "New Chat",
-          model: selectedModel
+          model: selectedModel,
         }),
       });
 
       if (res?.conversation) {
         const newConv = res.conversation;
-        setConversations(prev => [newConv, ...prev]);
+        setConversations((prev) => [newConv, ...prev]);
         setCurrentConversation(newConv);
         setMessages([]);
       }
@@ -90,23 +107,23 @@ const AITutor = () => {
 
   const handleAsk = async () => {
     if (!question.trim()) return;
-    
+
     let conversation = currentConversation;
-    
+
     // Create new conversation if none exists
     if (!conversation) {
       try {
         const res = await apiCall("/ai/conversations", {
           method: "POST",
-          body: JSON.stringify({ 
-            type: "qa", 
+          body: JSON.stringify({
+            type: "qa",
             title: question.substring(0, 50) + "...",
-            model: selectedModel
+            model: selectedModel,
           }),
         });
         conversation = res.conversation;
         setCurrentConversation(conversation);
-        setConversations(prev => [conversation, ...prev]);
+        setConversations((prev) => [conversation, ...prev]);
       } catch (err) {
         console.error("Failed to create conversation:", err);
         alert("Failed to create conversation");
@@ -118,7 +135,9 @@ const AITutor = () => {
 
     try {
       const msgRes = await apiCall(
-        `/ai/conversations/${conversation.id}/messages`,
+        `${import.meta.env.VITE_API_URL}/ai/conversations/${
+          conversation.id
+        }/messages`,
         {
           method: "POST",
           body: JSON.stringify({ content: question }),
@@ -126,7 +145,11 @@ const AITutor = () => {
       );
 
       if (msgRes?.user_message && msgRes?.ai_message) {
-        setMessages(prev => [...prev, msgRes.user_message, msgRes.ai_message]);
+        setMessages((prev) => [
+          ...prev,
+          msgRes.user_message,
+          msgRes.ai_message,
+        ]);
         setQuestion("");
       }
     } catch (err) {
@@ -146,17 +169,17 @@ const AITutor = () => {
         method: "POST",
         body: JSON.stringify({
           message: question,
-          model: selectedModel
+          model: selectedModel,
         }),
       });
 
-      setAnswers(prev => [
+      setAnswers((prev) => [
         ...prev,
         {
           question: res.message,
           answer: res.response,
-          model: res.model
-        }
+          model: res.model,
+        },
       ]);
       setQuestion("");
     } catch (err) {
@@ -177,7 +200,7 @@ const AITutor = () => {
         body: JSON.stringify({
           text: text,
           count: 5,
-          model: selectedModel
+          model: selectedModel,
         }),
       });
       setFlashcards(res.flashcards || []);
@@ -197,11 +220,11 @@ const AITutor = () => {
         body: JSON.stringify({
           text: text,
           question_count: 5,
-          model: selectedModel
+          model: selectedModel,
         }),
       });
       if (res.practice_test) {
-        setPracticeTests(prev => [res.practice_test, ...prev]);
+        setPracticeTests((prev) => [res.practice_test, ...prev]);
       }
     } catch (err) {
       console.error("Practice test generation failed:", err);
@@ -211,20 +234,25 @@ const AITutor = () => {
 
   const updateConversationModel = async (conversationId, newModel) => {
     try {
-      await apiCall(`/ai/conversations/${conversationId}/model`, {
-        method: "PUT",
-        body: JSON.stringify({ model: newModel }),
-      });
-      
+      await apiCall(
+        `${
+          import.meta.env.VITE_API_URL
+        }/ai/conversations/${conversationId}/model`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ model: newModel }),
+        }
+      );
+
       // Update the conversation in state
-      setConversations(prev => 
-        prev.map(conv => 
+      setConversations((prev) =>
+        prev.map((conv) =>
           conv.id === conversationId ? { ...conv, model: newModel } : conv
         )
       );
-      
+
       if (currentConversation?.id === conversationId) {
-        setCurrentConversation(prev => ({ ...prev, model: newModel }));
+        setCurrentConversation((prev) => ({ ...prev, model: newModel }));
       }
     } catch (err) {
       console.error("Failed to update model:", err);
@@ -238,7 +266,7 @@ const AITutor = () => {
         <h1 className="text-3xl font-bold flex items-center">
           <Bot className="h-8 w-8 mr-2" /> AI Tutor
         </h1>
-        
+
         {/* Model Selector */}
         <div className="flex items-center space-x-2">
           <Settings className="h-4 w-4" />
@@ -251,7 +279,9 @@ const AITutor = () => {
                 <SelectItem key={key} value={key}>
                   <div className="flex flex-col">
                     <span className="font-medium">{model.name}</span>
-                    <span className="text-xs text-gray-500">{model.description}</span>
+                    <span className="text-xs text-gray-500">
+                      {model.description}
+                    </span>
                   </div>
                 </SelectItem>
               ))}
@@ -265,14 +295,14 @@ const AITutor = () => {
         {[
           { id: "chat", label: "Chat", icon: MessageSquare },
           { id: "flashcards", label: "Flashcards", icon: BookOpen },
-          { id: "tests", label: "Practice Tests", icon: FileQuestion }
+          { id: "tests", label: "Practice Tests", icon: FileQuestion },
         ].map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             className={`flex items-center space-x-2 px-4 py-2 border-b-2 transition-colors ${
-              activeTab === id 
-                ? "border-blue-500 text-blue-600" 
+              activeTab === id
+                ? "border-blue-500 text-blue-600"
                 : "border-transparent text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -290,7 +320,11 @@ const AITutor = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Conversations</CardTitle>
-                <Button onClick={createNewConversation} size="sm" className="w-full">
+                <Button
+                  onClick={createNewConversation}
+                  size="sm"
+                  className="w-full"
+                >
                   New Chat
                 </Button>
               </CardHeader>
@@ -300,8 +334,8 @@ const AITutor = () => {
                     key={conv.id}
                     onClick={() => setCurrentConversation(conv)}
                     className={`p-2 rounded cursor-pointer text-sm ${
-                      currentConversation?.id === conv.id 
-                        ? "bg-blue-100 border border-blue-300" 
+                      currentConversation?.id === conv.id
+                        ? "bg-blue-100 border border-blue-300"
                         : "hover:bg-gray-100"
                     }`}
                   >
@@ -322,12 +356,16 @@ const AITutor = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center">
                     <MessageSquare className="h-5 w-5 mr-2" />
-                    {currentConversation ? currentConversation.title : "AI Chat"}
+                    {currentConversation
+                      ? currentConversation.title
+                      : "AI Chat"}
                   </CardTitle>
                   {currentConversation && (
-                    <Select 
-                      value={currentConversation.model || selectedModel} 
-                      onValueChange={(model) => updateConversationModel(currentConversation.id, model)}
+                    <Select
+                      value={currentConversation.model || selectedModel}
+                      onValueChange={(model) =>
+                        updateConversationModel(currentConversation.id, model)
+                      }
                     >
                       <SelectTrigger className="w-40">
                         <SelectValue />
@@ -343,7 +381,7 @@ const AITutor = () => {
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="flex-1 flex flex-col">
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto space-y-4 mb-4">
@@ -379,10 +417,18 @@ const AITutor = () => {
                     }}
                   />
                   <div className="flex space-x-2">
-                    <Button onClick={handleAsk} disabled={loading} className="flex-1">
+                    <Button
+                      onClick={handleAsk}
+                      disabled={loading}
+                      className="flex-1"
+                    >
                       {loading ? "Thinking..." : "Send"}
                     </Button>
-                    <Button onClick={handleQuickChat} disabled={loading} variant="outline">
+                    <Button
+                      onClick={handleQuickChat}
+                      disabled={loading}
+                      variant="outline"
+                    >
                       Quick Chat
                     </Button>
                   </div>
@@ -423,7 +469,8 @@ const AITutor = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button onClick={handleGenerateFlashcards} className="w-full">
-              Generate Flashcards with {availableModels[selectedModel]?.name || selectedModel}
+              Generate Flashcards with{" "}
+              {availableModels[selectedModel]?.name || selectedModel}
             </Button>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {flashcards.map((card) => (
@@ -450,22 +497,27 @@ const AITutor = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button onClick={handleGeneratePracticeTest} className="w-full">
-              Generate Practice Test with {availableModels[selectedModel]?.name || selectedModel}
+              Generate Practice Test with{" "}
+              {availableModels[selectedModel]?.name || selectedModel}
             </Button>
             <div className="space-y-4">
               {practiceTests.map((test) => (
                 <div key={test.id} className="p-4 border rounded-lg bg-gray-50">
                   <div className="font-semibold mb-2">{test.title}</div>
                   <div className="text-sm text-gray-600 mb-2">
-                    Questions: {test.total_questions} | 
+                    Questions: {test.total_questions} |
                     {test.score && ` Score: ${test.score}% |`}
                     Created: {new Date(test.created_at).toLocaleDateString()}
                   </div>
                   {test.questions && (
                     <details className="text-sm">
-                      <summary className="cursor-pointer font-medium">View Questions</summary>
+                      <summary className="cursor-pointer font-medium">
+                        View Questions
+                      </summary>
                       <pre className="mt-2 whitespace-pre-wrap text-xs bg-white p-2 rounded">
-                        {typeof test.questions === 'string' ? test.questions : JSON.stringify(test.questions, null, 2)}
+                        {typeof test.questions === "string"
+                          ? test.questions
+                          : JSON.stringify(test.questions, null, 2)}
                       </pre>
                     </details>
                   )}
