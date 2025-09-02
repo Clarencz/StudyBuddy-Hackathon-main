@@ -71,9 +71,7 @@ const AITutor = () => {
   const loadConversationMessages = async (conversationId) => {
     try {
       const res = await apiCall(
-        `${
-          import.meta.env.VITE_API_URL
-        }/ai/conversations/${conversationId}/messages`,
+        `/ai/conversations/${conversationId}/messages`,
         { method: "GET" }
       );
       setMessages(res.messages || []);
@@ -135,9 +133,7 @@ const AITutor = () => {
 
     try {
       const msgRes = await apiCall(
-        `${import.meta.env.VITE_API_URL}/ai/conversations/${
-          conversation.id
-        }/messages`,
+        `/ai/conversations/${conversation.id}/messages`,
         {
           method: "POST",
           body: JSON.stringify({ content: question }),
@@ -234,15 +230,10 @@ const AITutor = () => {
 
   const updateConversationModel = async (conversationId, newModel) => {
     try {
-      await apiCall(
-        `${
-          import.meta.env.VITE_API_URL
-        }/ai/conversations/${conversationId}/model`,
-        {
-          method: "PUT",
-          body: JSON.stringify({ model: newModel }),
-        }
-      );
+      await apiCall(`/ai/conversations/${conversationId}/model`, {
+        method: "PUT",
+        body: JSON.stringify({ model: newModel }),
+      });
 
       // Update the conversation in state
       setConversations((prev) =>

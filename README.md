@@ -3,19 +3,21 @@
 <p align="center">
   <img src="StudyBuddyLogo/studybuddy_logo.png" alt="StudyBuddy Logo" width="200"/>
 </p>
+
 ![Version](https://img.shields.io/badge/Version-2.0.0-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
 
-## ScreenShots
-
 # App Screenshots
 
 <p align="center">
-  <img src="Screenshots/Dashboard.png" width="250"/>
-  <img src="Screenshots/StudyRooms.png" width="250"/>
-  <img src="Screenshots/Documents.png" width="250"/>
-  <img src="Screenshots/AI Tutor.png" width="250"/>
+  <img src="Screenshots/Dashboard.png" width="280"/>
+  <img src="Screenshots/StudyRooms.png" width="280"/>
+  <img src="Screenshots/InsideStudyRooms.png" width="280">
+  <img src="Screenshots/Documents.png" width="280"/>
+  <img src="Screenshots/AI Tutor.png" width="280"/>
+  <img src="Screenshots/ProfileSettings.png" width="280">
+  <img src="Screenshots/intergrations.png" width="280">
   
 </p>
 
