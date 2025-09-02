@@ -51,8 +51,9 @@ def create_app():
     # Enable CORS for all routes
     CORS(app,
          origins=[
-             "https://study-buddy-hackathon-main.vercel.app",
-             "https://studybuddy-hackathon-main-production.up.railway.app"
+             "https://studybuddy-hackathon-main-production.up.railway.app",
+             "https://study-buddy-hackathon-main.vercel.app"
+             
          ],
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization"],
