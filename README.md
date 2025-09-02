@@ -1,6 +1,6 @@
 # StudyBuddy Enhanced - Production-Ready Version 2.0
 
-![StudyBuddyLogo](studybuddy_logo.png)
+![StudyBuddy Logo](StudyBuddyLogo/studybuddy_logo.png)
 ![Version](https://img.shields.io/badge/Version-2.0.0-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
