@@ -39,20 +39,24 @@ const AITutor = () => {
     const fetchData = async () => {
       try {
         // Get available models
-        const modelsRes = await apiCall("/ai/models", { method: "GET" });
+        const modelsRes = await apiCall("/api/ai/models", { method: "GET" });
         setAvailableModels(modelsRes.models || {});
         setSelectedModel(modelsRes.default_model || "gpt-3.5-turbo");
 
         // Get conversations
-        const convRes = await apiCall("/ai/conversations", { method: "GET" });
+        const convRes = await apiCall("/api/ai/conversations", {
+          method: "GET",
+        });
         setConversations(convRes.conversations || []);
 
         // Get flashcards
-        const flashRes = await apiCall("/ai/flashcards", { method: "GET" });
+        const flashRes = await apiCall("/api/ai/flashcards", { method: "GET" });
         setFlashcards(flashRes.flashcards || []);
 
         // Get practice tests
-        const testRes = await apiCall("/ai/practice-tests", { method: "GET" });
+        const testRes = await apiCall("/api/ai/practice-tests", {
+          method: "GET",
+        });
         setPracticeTests(testRes.practice_tests || []);
       } catch (err) {
         console.error("Failed to fetch AI data:", err);
@@ -71,7 +75,7 @@ const AITutor = () => {
   const loadConversationMessages = async (conversationId) => {
     try {
       const res = await apiCall(
-        `/ai/conversations/${conversationId}/messages`,
+        `/api/ai/conversations/${conversationId}/messages`,
         { method: "GET" }
       );
       setMessages(res.messages || []);
@@ -82,7 +86,7 @@ const AITutor = () => {
 
   const createNewConversation = async () => {
     try {
-      const res = await apiCall("/ai/conversations", {
+      const res = await apiCall("/api/ai/conversations", {
         method: "POST",
         body: JSON.stringify({
           type: "qa",
@@ -111,7 +115,7 @@ const AITutor = () => {
     // Create new conversation if none exists
     if (!conversation) {
       try {
-        const res = await apiCall("/ai/conversations", {
+        const res = await apiCall("/api/ai/conversations", {
           method: "POST",
           body: JSON.stringify({
             type: "qa",
@@ -133,7 +137,7 @@ const AITutor = () => {
 
     try {
       const msgRes = await apiCall(
-        `/ai/conversations/${conversation.id}/messages`,
+        `/api/ai/conversations/${conversation.id}/messages`,
         {
           method: "POST",
           body: JSON.stringify({ content: question }),
@@ -161,7 +165,7 @@ const AITutor = () => {
     setLoading(true);
 
     try {
-      const res = await apiCall("/ai/chat", {
+      const res = await apiCall("/api/ai/chat", {
         method: "POST",
         body: JSON.stringify({
           message: question,
@@ -191,7 +195,7 @@ const AITutor = () => {
     if (!text) return;
 
     try {
-      const res = await apiCall("/ai/generate-flashcards", {
+      const res = await apiCall("/api/ai/generate-flashcards", {
         method: "POST",
         body: JSON.stringify({
           text: text,
@@ -211,7 +215,7 @@ const AITutor = () => {
     if (!text) return;
 
     try {
-      const res = await apiCall("/ai/generate-practice-test", {
+      const res = await apiCall("/api/ai/generate-practice-test", {
         method: "POST",
         body: JSON.stringify({
           text: text,
@@ -230,7 +234,7 @@ const AITutor = () => {
 
   const updateConversationModel = async (conversationId, newModel) => {
     try {
-      await apiCall(`/ai/conversations/${conversationId}/model`, {
+      await apiCall(`/api/ai/conversations/${conversationId}/model`, {
         method: "PUT",
         body: JSON.stringify({ model: newModel }),
       });
