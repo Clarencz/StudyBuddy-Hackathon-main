@@ -14,7 +14,7 @@ class IntaSendClient:
         self.publishable_key = publishable_key or os.environ.get('INTASEND_PUBLISHABLE_KEY')
         self.secret_key = secret_key or os.environ.get('INTASEND_SECRET_KEY')
         self.test_mode = test_mode
-        self.base_url = "https://sandbox.intasend.com/api/v1" if test_mode else "https://payment.intasend.com/api/"
+        self.base_url = "https://sandbox.intasend.com/api/v1" if test_mode else "https://payment.intasend.com/api/v1"
         
     def _make_request(self, endpoint, method='GET', data=None):
         """Make authenticated request to IntaSend API"""
