@@ -16,7 +16,7 @@ const Documents = () => {
   // Fetch documents
   const fetchDocuments = async () => {
     try {
-      const data = await apiCall("/documents", { method: "GET" });
+      const data = await apiCall("/api/documents", { method: "GET" });
       setDocuments(data.documents);
     } catch (err) {
       console.error(err);
@@ -45,7 +45,7 @@ const Documents = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/documents/upload",
+        `${import.meta.env.VITE_API_URL}/api/documents/upload`,
         formData,
         {
           headers: {
@@ -69,7 +69,7 @@ const Documents = () => {
     if (!window.confirm("Are you sure you want to delete this document?"))
       return;
     try {
-      await apiCall(`/documents/${id}`, { method: "DELETE" });
+      await apiCall(`/api/documents/${id}`, { method: "DELETE" });
       setDocuments((prev) => prev.filter((doc) => doc.id !== id));
     } catch (err) {
       console.error(err);
@@ -79,14 +79,18 @@ const Documents = () => {
 
   // Download document
   const handleDownload = (doc) => {
-    const url = `http://localhost:5000/api/documents/${doc.id}/download`;
+    const url = `${import.meta.env.VITE_API_URL}/api/documents/${
+      doc.id
+    }/download`;
     window.open(url, "_blank");
   };
 
   // View flipbook
   const handleViewFlipbook = (doc) => {
     if (!doc.flipbook_url) return alert("Flipbook not available");
-    const url = `http://localhost:5000/api/documents/${doc.id}/flipbook`;
+    const url = `${import.meta.env.VITE_API_URL}/api/documents/${
+      doc.id
+    }/flipbook`;
     window.open(url, "_blank");
   };
 

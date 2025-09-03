@@ -52,7 +52,7 @@ const Dashboard = () => {
   // Fetch dynamic stats from backend
   const fetchDashboardData = async (showRefreshing = false) => {
     if (showRefreshing) setRefreshing(true);
-    
+
     try {
       // Fetch all dashboard data in parallel
       const [
@@ -63,31 +63,39 @@ const Dashboard = () => {
         practiceTestsRes,
         conversationsRes,
         subscriptionRes,
-        activityRes
+        activityRes,
       ] = await Promise.allSettled([
-        apiCall("/users/stats", { method: "GET" }),
-        apiCall("/rooms/user-rooms", { method: "GET" }),
-        apiCall("/documents", { method: "GET" }),
-        apiCall("/ai/flashcards", { method: "GET" }),
-        apiCall("/ai/practice-tests", { method: "GET" }),
-        apiCall("/ai/conversations", { method: "GET" }),
-        apiCall("/payment/status", { method: "GET" }),
-        apiCall("/users/activity", { method: "GET" })
+        apiCall("/api/users/stats", { method: "GET" }),
+        apiCall("/api/rooms/user-rooms", { method: "GET" }),
+        apiCall("/api/documents", { method: "GET" }),
+        apiCall("/api/ai/flashcards", { method: "GET" }),
+        apiCall("/api/ai/practice-tests", { method: "GET" }),
+        apiCall("/api/ai/conversations", { method: "GET" }),
+        apiCall("/api/payment/status", { method: "GET" }),
+        apiCall("/api/users/activity", { method: "GET" }),
       ]);
 
       // Process results safely
-      const userStats = userStatsRes.status === 'fulfilled' ? userStatsRes.value : {};
-      const rooms = roomsRes.status === 'fulfilled' ? roomsRes.value : {};
-      const docs = docsRes.status === 'fulfilled' ? docsRes.value : {};
-      const flashcards = flashcardsRes.status === 'fulfilled' ? flashcardsRes.value : {};
-      const practiceTests = practiceTestsRes.status === 'fulfilled' ? practiceTestsRes.value : {};
-      const conversations = conversationsRes.status === 'fulfilled' ? conversationsRes.value : {};
-      const subscription = subscriptionRes.status === 'fulfilled' ? subscriptionRes.value : {};
-      const activity = activityRes.status === 'fulfilled' ? activityRes.value : {};
+      const userStats =
+        userStatsRes.status === "fulfilled" ? userStatsRes.value : {};
+      const rooms = roomsRes.status === "fulfilled" ? roomsRes.value : {};
+      const docs = docsRes.status === "fulfilled" ? docsRes.value : {};
+      const flashcards =
+        flashcardsRes.status === "fulfilled" ? flashcardsRes.value : {};
+      const practiceTests =
+        practiceTestsRes.status === "fulfilled" ? practiceTestsRes.value : {};
+      const conversations =
+        conversationsRes.status === "fulfilled" ? conversationsRes.value : {};
+      const subscription =
+        subscriptionRes.status === "fulfilled" ? subscriptionRes.value : {};
+      const activity =
+        activityRes.status === "fulfilled" ? activityRes.value : {};
 
       setStats({
-        totalStudyTime: userStats.total_study_time || user?.total_study_time || 0,
-        roomsJoined: (rooms.owned_rooms?.length || 0) + (rooms.joined_rooms?.length || 0),
+        totalStudyTime:
+          userStats.total_study_time || user?.total_study_time || 0,
+        roomsJoined:
+          (rooms.owned_rooms?.length || 0) + (rooms.joined_rooms?.length || 0),
         documentsUploaded: docs.documents?.length || 0,
         flashcardsCreated: flashcards.flashcards?.length || 0,
         practiceTestsTaken: practiceTests.practice_tests?.length || 0,
@@ -97,7 +105,6 @@ const Dashboard = () => {
 
       setSubscriptionStatus(subscription);
       setLastUpdated(new Date());
-
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
@@ -224,24 +231,25 @@ const Dashboard = () => {
               </p>
               {subscriptionStatus && (
                 <div className="flex items-center space-x-2 mt-2">
-                  <Badge 
+                  <Badge
                     className={`${
-                      subscriptionStatus.is_active 
-                        ? "bg-yellow-500 text-yellow-900" 
+                      subscriptionStatus.is_active
+                        ? "bg-yellow-500 text-yellow-900"
                         : "bg-gray-500 text-gray-100"
                     }`}
                   >
                     {subscriptionStatus.is_active ? "Premium" : "Free"}
                   </Badge>
-                  {subscriptionStatus.is_active && subscriptionStatus.days_remaining > 0 && (
-                    <span className="text-sm text-blue-100">
-                      {subscriptionStatus.days_remaining} days remaining
-                    </span>
-                  )}
+                  {subscriptionStatus.is_active &&
+                    subscriptionStatus.days_remaining > 0 && (
+                      <span className="text-sm text-blue-100">
+                        {subscriptionStatus.days_remaining} days remaining
+                      </span>
+                    )}
                 </div>
               )}
             </div>
-            
+
             <div className="flex items-center space-x-4 mt-4 lg:mt-0">
               <div className="text-center">
                 <div className="flex items-center space-x-2 bg-white/20 rounded-full px-4 py-2">
@@ -252,7 +260,7 @@ const Dashboard = () => {
                 </div>
                 <p className="text-sm text-blue-100 mt-1">Day Streak</p>
               </div>
-              
+
               <Button
                 variant="secondary"
                 size="sm"
@@ -260,7 +268,9 @@ const Dashboard = () => {
                 disabled={refreshing}
                 className="bg-white/20 hover:bg-white/30 text-white border-white/30"
               >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                />
               </Button>
             </div>
           </div>
@@ -320,13 +330,14 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
-            const isPremiumRequired = action.premium && !subscriptionStatus?.is_active;
-            
+            const isPremiumRequired =
+              action.premium && !subscriptionStatus?.is_active;
+
             return (
               <Card
                 key={index}
                 className={`group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 bg-gradient-to-br from-white to-gray-50 ${
-                  isPremiumRequired ? 'opacity-75' : ''
+                  isPremiumRequired ? "opacity-75" : ""
                 }`}
                 onClick={() => {
                   if (isPremiumRequired) {
@@ -377,14 +388,20 @@ const Dashboard = () => {
           <CardContent>
             <div className="space-y-3">
               {stats.recentActivity.length > 0 ? (
-                stats.recentActivity.slice(0, 5).map((activity, index) => (
-                  <ActivityItem key={index} activity={activity} />
-                ))
+                stats.recentActivity
+                  .slice(0, 5)
+                  .map((activity, index) => (
+                    <ActivityItem key={index} activity={activity} />
+                  ))
               ) : (
                 <div className="text-center py-8">
                   <Activity className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm">No recent activity yet.</p>
-                  <p className="text-gray-400 text-xs">Start studying to see your activity here!</p>
+                  <p className="text-gray-500 text-sm">
+                    No recent activity yet.
+                  </p>
+                  <p className="text-gray-400 text-xs">
+                    Start studying to see your activity here!
+                  </p>
                 </div>
               )}
             </div>
@@ -399,7 +416,8 @@ const Dashboard = () => {
               Achievements
             </CardTitle>
             <CardDescription>
-              {achievements.filter(a => a.earned).length} of {achievements.length} earned
+              {achievements.filter((a) => a.earned).length} of{" "}
+              {achievements.length} earned
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -437,12 +455,15 @@ const Dashboard = () => {
             />
             <div className="flex items-center justify-between text-xs text-gray-500">
               <span>
-                {Math.max(0, (20 * 60) - stats.totalStudyTime) > 0 
-                  ? `${formatStudyTime(Math.max(0, (20 * 60) - stats.totalStudyTime))} remaining`
-                  : "Goal achieved! 🎉"
-                }
+                {Math.max(0, 20 * 60 - stats.totalStudyTime) > 0
+                  ? `${formatStudyTime(
+                      Math.max(0, 20 * 60 - stats.totalStudyTime)
+                    )} remaining`
+                  : "Goal achieved! 🎉"}
               </span>
-              <span>{Math.round((stats.totalStudyTime / (20 * 60)) * 100)}%</span>
+              <span>
+                {Math.round((stats.totalStudyTime / (20 * 60)) * 100)}%
+              </span>
             </div>
           </div>
         </CardContent>
@@ -463,7 +484,9 @@ const Dashboard = () => {
           <CardContent>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
               <div>
-                <p className="text-sm text-yellow-800 mb-2">Premium features include:</p>
+                <p className="text-sm text-yellow-800 mb-2">
+                  Premium features include:
+                </p>
                 <ul className="text-xs text-yellow-700 space-y-1">
                   <li>• Unlimited study rooms and documents</li>
                   <li>• Advanced AI tutor with GPT-4</li>
@@ -471,7 +494,7 @@ const Dashboard = () => {
                   <li>• Priority support</li>
                 </ul>
               </div>
-              <Button 
+              <Button
                 onClick={() => navigate("/subscription")}
                 className="bg-yellow-600 hover:bg-yellow-700 text-white"
               >
@@ -521,7 +544,9 @@ const ActivityItem = ({ activity }) => {
 
   return (
     <div className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-      <div className={`p-2 rounded-full ${colors[activity.type] || colors.study}`}>
+      <div
+        className={`p-2 rounded-full ${colors[activity.type] || colors.study}`}
+      >
         {icons[activity.type] || icons.study}
       </div>
       <div className="flex-1 min-w-0">
@@ -536,7 +561,7 @@ const ActivityItem = ({ activity }) => {
 
 const AchievementItem = ({ achievement }) => {
   const Icon = achievement.icon || Trophy;
-  
+
   return (
     <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
       <div
@@ -556,7 +581,9 @@ const AchievementItem = ({ achievement }) => {
         >
           {achievement.name}
         </p>
-        <p className="text-xs text-gray-500 truncate">{achievement.description}</p>
+        <p className="text-xs text-gray-500 truncate">
+          {achievement.description}
+        </p>
       </div>
       {achievement.earned && (
         <Badge className="bg-yellow-100 text-yellow-800 text-xs">Earned</Badge>
